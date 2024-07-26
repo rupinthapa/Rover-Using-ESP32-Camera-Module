@@ -1,0 +1,75 @@
+Code Breakdown
+
+Includes and Defines
+
+ESP Headers:
+#include "esp_camera.h": Library for interfacing with the ESP32 camera module.
+#include <Arduino.h>: Provides core Arduino functions and definitions.
+#include <WiFi.h>: Essential for WiFi connectivity on the ESP32.
+#include <AsyncTCP.h> & #include <ESPAsyncWebServer.h>: Libraries for setting up a web server and WebSocket communication.
+#include <iostream>: Included for potential debugging using Serial (not strictly necessary in the provided code).
+#include <sstream>: For string manipulation, like handling input data from WebSockets.
+#include <ESP32Servo.h>: Library to control servo motors.
+Motor and Servo Pins:
+#define PAN_PIN 14 & #define TILT_PIN 15: GPIO pins for the pan and tilt servos.
+Motor Definitions:
+Servo panServo; & Servo tiltServo;: Creates servo objects.
+struct MOTOR_PINS: Defines a structure to hold pin configurations for each motor (Enable, IN1, IN2).
+std::vector<MOTOR_PINS> motorPins: A vector to store motor pin configurations.
+Light Pin: Defines the GPIO pin for the light.
+Movement Constants: Defines integer values for different directions of movement.
+PWM Constants: Defines PWM settings (frequency, resolution, channels).
+Camera Constants: GPIO pins and configuration parameters for the ESP32 camera module.
+WiFi Credentials: Defines the SSID and password for your WiFi network.
+Web Server and WebSockets:
+AsyncWebServer server(80): Creates a web server on port 80.
+AsyncWebSocket wsCamera("/Camera") & AsyncWebSocket wsCarInput("/CarInput"): Sets up WebSocket endpoints.
+cameraClientId: Keeps track of the connected camera WebSocket client.
+HTML Code (htmlHomePage)
+
+HTML Structure: Defines the basic structure of the web control page.
+Styling: Provides CSS for buttons, sliders, and layout.
+Navigation Arrows: Creates the directional control buttons.
+Speed, Light, Pan, Tilt Sliders: Creates sliders to adjust these parameters.
+JavaScript:
+Functions to handle WebSocket connections (initCameraWebSocket, initCarInputWebSocket).
+sendButtonInput function to send control data to the ESP32 via WebSockets.
+Functions
+
+rotateMotor(int motorNumber, int motorDirection)
+Controls the rotation of a motor by setting the appropriate pin states.
+moveCar(int inputValue)
+Implements car movement logic based on the received input: forward, backward, left, right, and stop.
+handleRoot(AsyncWebServerRequest *request)
+Handles requests to the root page, serving the htmlHomePage.
+handleNotFound(AsyncWebServerRequest *request)
+Handles requests for non-existent pages, returning a 404 error.
+onCarInputWebSocketEvent(...)
+Handles WebSocket events for the car control endpoint:
+Logs client connections and disconnections.
+Processes incoming text data (containing commands and values).
+Calls appropriate functions (moveCar, ledcWrite) to control the car and lights, or to adjust the servos.
+onCameraWebSocketEvent(...)
+Handles WebSocket events for the camera endpoint:
+Logs client connections and disconnections.
+Keeps track of the camera client ID.
+setupCamera()
+Initializes the camera module using the provided configuration.
+sendCameraPicture()
+Captures a camera frame.
+Sends the JPEG image over the WebSocket to the connected client.
+Measures and prints the time taken for various steps.
+setUpPinModes()
+Configures GPIO pins for motors, servos, and lights.
+Initializes PWM channels.
+setup()
+
+Sets up pin modes and PWM channels.
+Starts the WiFi access point.
+Configures the web server, routes, and WebSocket handlers.
+Initializes the camera.
+loop()
+
+Cleans up disconnected WebSocket clients.
+Captures and sends the camera frame over WebSocket.
+Prints free PSRAM information (if PSRAM is enabled).
